@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v4
       - name: Set up Node.js
@@ -45,8 +45,14 @@ jobs:
       - name: Get GKE credentials
         run: |
           gcloud container clusters get-credentials autopilot-cluster-1 --region us-central1 --project tranquil-app-460319-u3
-      - name: Install gke-gcloud-auth-plugin (pip)
-        run: pip install --upgrade google-cloud-sdk-gke-gcloud-auth-plugin
+      - name: Add Google Cloud SDK apt repo
+        run: |
+          echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+          sudo apt-get install -y apt-transport-https ca-certificates gnupg
+          curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+          sudo apt-get update
+      - name: Install gke-gcloud-auth-plugin
+        run: sudo apt-get install -y google-cloud-sdk-gke-gcloud-auth-plugin
       - name: Deploy DVWA to GKE
         run: |
           kubectl apply -f dvwa-k8s.yaml
