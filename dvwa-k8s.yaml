@@ -14,19 +14,28 @@ spec:
     spec:
       containers:
       - name: dvwa
-        image: vulnerables/web-dvwa:latest
+        image: vulnerables/web-dvwa
         ports:
         - containerPort: 80
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "p@ssw0rd"
+        - name: MYSQL_USER
+          value: "dvwa"
+        - name: MYSQL_PASSWORD
+          value: "dvwa"
+        - name: MYSQL_DATABASE
+          value: "dvwa"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: dvwa
+  name: dvwa-service
 spec:
-  type: NodePort
+  type: LoadBalancer
   selector:
     app: dvwa
   ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 80
+  - protocol: TCP
+    port: 80
+    targetPort: 80
