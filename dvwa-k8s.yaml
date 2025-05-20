@@ -23,7 +23,7 @@ kind: Service
 metadata:
   name: dvwa
 spec:
-  type: LoadBalancer
+  type: NodePort
   selector:
     app: dvwa
   ports:
